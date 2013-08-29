@@ -10,9 +10,24 @@ require 'uri'
 setup ENV['EMAIL'] || 'thoughtworks.chennai@gmail.com', ENV['PASSWORD']
 
 def say(message)
+  log(message)
+
   player = ENV['PLAYER'] || 'omxplayer'
-  url = URI.escape("http://translate.google.com/translate_tts?tl=en&q=#{message}")
-  `#{player} "#{url}"`
+  max_length = 100
+  messages = message.scan(/.{1,#{max_length}}\b|.{1,#{max_length}}/).map(&:strip)
+
+  messages.each do |m|
+    url = URI.escape("http://translate.google.com/translate_tts?tl=en&q=#{m}")
+    execute %Q{#{player} "#{url}"}
+  end
+end
+
+def log(message)
+  File.open("chitty.log", "a+"){ |f| f << "#{message}\n" }
+end
+
+def execute(cmd)
+  `#{cmd}`
 end
 
 # Auto approve subscription requests
@@ -22,8 +37,11 @@ end
 
 # Say what was said
 message :chat?, :body do |m|
-  say m.body
-  say "This message is from: #{m.from.node}"
+  message = m.body.gsub("\n", " ").gsub("-", "").gsub("/", " or ")
+  message << ".. This message is from: #{m.from.node}"
+
+  say message
+
   reply = m.reply
   reply.body = "Your wish is my command"
   write_to_stream reply
