@@ -13,6 +13,18 @@ ENV['LANGUAGE'] ||= "hi"
 
 setup ENV['EMAIL'], ENV['PASSWORD']
 
+# Requires root privilege
+def turn_on_gpio
+	`sudo ruby turnon.rb`
+	sleep 1
+end
+
+#Requires root privilege
+def turn_off_gpio
+	sleep 1
+	`sudo ruby turnoff.rb`
+end
+
 def say(message)
   log(message)
 
@@ -47,7 +59,10 @@ message :chat?, :body do |m|
     name = ENV["NAME"] || response.vcard["FN"].split(" ")[0]
 
     message << ".. This message is from: #{name}"
+
+    turn_on_gpio
     say message
+    turn_off_gpio
 
     reply = m.reply
     reply.body = "Your wish is my command"
