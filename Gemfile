@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
 
 gem 'blather'
-gem 'pi_piper'
+gem 'rest_client'
+gem 'rake'
