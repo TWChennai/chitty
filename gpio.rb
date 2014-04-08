@@ -13,6 +13,7 @@ class GPIO
     def on
       resource("http://#{host}:8000/GPIO/#{port}/function/out").post({})
       resource("http://#{host}:8000/GPIO/#{port}/value/1").post({})
+      sleep 3
     end
 
     def off

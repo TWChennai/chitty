@@ -5,7 +5,7 @@ require './gpio'
 
 ENV['EMAIL'] ||= "thoughtworks.chennai@gmail.com"
 ENV['PLAYER'] ||= "omxplayer"
-ENV['LANGUAGE'] ||= "hi"
+ENV['LANGUAGE'] ||= "en"
 
 module Utils
   def say(message)
@@ -21,7 +21,7 @@ module Utils
   end
 
   def log(message)
-    File.open("chitty.log", "a+"){ |f| f << "#{message}\n" }
+    File.open("chitty.log", "a+"){ |f| f << "#{Time.now}: #{message}\n" }
   end
 
   def execute(cmd)
@@ -35,7 +35,7 @@ module Listener
 
   def self.listen
     p "Started"
-    EM.run { client.run }    
+    EM.run { client.run }
   end
 
   setup ENV['EMAIL'], ENV['PASSWORD']
@@ -51,7 +51,7 @@ module Listener
     client.write_with_handler iq do |response|
       name = ENV["NAME"] || response.vcard["FN"].split(" ")[0]
 
-      message << ".. This message is from: #{name}"
+      message << ".. This message is brought to you by: #{name}"
 
       GPIO.on
       say message
